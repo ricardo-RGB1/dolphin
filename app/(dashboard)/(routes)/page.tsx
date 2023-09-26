@@ -1,8 +1,9 @@
-
-const Home = () => {
+import { UserButton } from "@clerk/nextjs";
+ 
+export default function Home() {
   return (
-    <div>This is a protected page</div>
+    <div>
+      <UserButton afterSignOutUrl="/"/>
+    </div>
   )
 }
-
-export default Home
