@@ -49,10 +49,10 @@ const CreatePage = () => {
     // create an onSubmit handler function for the form
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         try {
-            // make a POST request to the server
+            // make a POST request to the server & redirect the user to the course page
             const response = await axios.post('/api/courses', values);
-            // redirect the user to the course page
             router.push(`/teacher/courses/${response.data.id}`);
+            toast.success('Course created successfully');
         } catch {
             toast.error('Something went wrong');
         }
