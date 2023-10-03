@@ -5,17 +5,21 @@ import { LayoutDashboard } from "lucide-react";
 import { redirect } from "next/navigation";
 import TitleForm from "./_components/title-form";
 
+
+// the courseId is passed in as a parameter to the page
+// the params is a type of {courseId: string} - an object with a courseId property of type string
 const CourseIdPage = async ({params}:{params: {courseId: string}}) => {
+    
     const { userId } = auth(); // to keep track of which user created which course
 
     if(!userId) {
         return redirect('/');
     }
 
-    // Check if the course exists in the database
+    // Find the course with the given id
     const course = await db.course.findUnique({
-        where: {
-            id: params.courseId
+        where: { 
+            id: params.courseId // find the course with the given id
         }
     })
 
