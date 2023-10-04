@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-
+import { cn } from "@/lib/utils";
 import {
   Form,
   FormControl,
@@ -21,21 +21,21 @@ import { Pencil } from "lucide-react";
 
 // create the form schema
 const formSchema = z.object({
-  title: z.string().min(1, {
-    // make sure the title is at least 1 character long
-    message: "Title is required",
+  description: z.string().min(1, {
+    // make sure the description is at least 1 character long
+    message: "Description is required",
   }),
 });
 
 // create the form types
-interface TitleFormProps {
+interface DescriptionFormProps {
   initialData: {
-    title: string;
+    description: string;
   };
   courseId: string;
 }
 
-const TitleForm = ({ initialData, courseId }: TitleFormProps) => {
+const DescriptionForm = ({ initialData, courseId }: DescriptionFormProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const router = useRouter();
 
@@ -68,7 +68,7 @@ const TitleForm = ({ initialData, courseId }: TitleFormProps) => {
   return (
     <div className="mt-6 border bg-slate-100 rounded-md p-4">
       <div className="font-medium flex items-center justify-between">
-        Title
+        Description
         <Button variant="ghost" onClick={toggleEditing}>
           {isEditing ? (
             <>Cancel</>
@@ -81,7 +81,12 @@ const TitleForm = ({ initialData, courseId }: TitleFormProps) => {
       </div>
 
       {/* if not editing, show the title */}
-      {!isEditing && <p className="text-sm mt-2">{initialData.title}</p>}
+      {!isEditing && (
+        <p className={cn("text-sm mt-2",
+         !initialData.description && "text-slate-500 italic")}>
+          {initialData.description || "No description"}
+        </p>
+      )}
 
       {isEditing && (
         <Form {...form}>
@@ -91,7 +96,7 @@ const TitleForm = ({ initialData, courseId }: TitleFormProps) => {
           >
             <FormField
               control={form.control}
-              name="title"
+              name="description"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
@@ -117,7 +122,7 @@ const TitleForm = ({ initialData, courseId }: TitleFormProps) => {
   );
 };
 
-export default TitleForm;
+export default DescriptionForm;
 
 // onSubmit handler function:
 // The onSubmit function is called when the form is submitted. It sends a PATCH request to the server with the form data using the axios library. The PATCH request is sent to the /api/courses/:courseId endpoint with the courseId parameter in the URL. The values argument contains the updated course title.

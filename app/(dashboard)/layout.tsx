@@ -5,7 +5,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
     return (
         <div className="h-full">
             {/* Navbar and Sidebar will look the same for ALL pages */}
-            <div className="h-[80px] md:pl-56 fixed inset-y-0 w-full z-50">
+            <div className="h-[71.32px] md:pl-56 fixed inset-y-0 w-full z-50">
                 <Navbar />
             </div>
             <div className="hidden md:flex h-full w-56 flex-col fixed inset-y-0 z-50">

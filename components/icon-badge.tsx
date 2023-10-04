@@ -2,7 +2,7 @@ import { LucideIcon } from 'lucide-react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
-// create background variants for the icon
+// create background variants for the icon badge (color and size)
 const backgroundVariants = cva(
     "rounded-full flex items-center justify-center",
     {
@@ -24,7 +24,7 @@ const backgroundVariants = cva(
 
 );
 
-// create variants for the icon
+// create variants for the icon itself (color and size)
 const iconVariants = cva(
     "",
     {
