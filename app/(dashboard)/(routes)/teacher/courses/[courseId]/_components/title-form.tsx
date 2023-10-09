@@ -22,7 +22,8 @@ import { Pencil } from "lucide-react";
 
 // create the form schema
 const formSchema = z.object({
-  title: z.string().min(1, { // make sure the title is at least 1 character long
+  title: z.string().min(1, {
+    // make sure the title is at least 1 character long
     message: "Title is required",
   }),
 });
@@ -69,19 +70,24 @@ const TitleForm = ({ initialData, courseId }: TitleFormProps) => {
     <div className="mt-6 border bg-slate-100 rounded-md p-4">
       <div className="font-medium flex items-center justify-between">
         Title
-       <Button variant='ghost' onClick={toggleEditing}>
-        {isEditing && <>Cancel</>}
-        {!isEditing && (
-          <>
-            <Pencil className="h-4 w-4 mr-2" />
-          </>
-        )}
-       </Button>
+        <Button variant="ghost" onClick={toggleEditing}>
+        {isEditing ? (
+            <>Cancel</>  // if editing, show the cancel button
+          ) : (
+            <>
+                <button
+                data-tooltip-id="my-tooltip"
+                data-tooltip-content="Edit title"
+                data-tooltip-place="top"
+              >
+                <Pencil className="h-4 w-4 mr-2" />
+              </button><Tooltip id="my-tooltip" />
+            </>
+          )}
+        </Button>
       </div>
       {/* if not editing, show the title */}
-      {!isEditing && (
-        <p className="text-sm mt-2">{initialData.title}</p>
-      )}
+      {!isEditing && <p className="text-sm mt-2">{initialData.title}</p>}
 
       {isEditing && (
         <Form {...form}>

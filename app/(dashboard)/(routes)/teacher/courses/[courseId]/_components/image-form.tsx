@@ -73,7 +73,7 @@ const ImageForm = ({ initialData, courseId }: ImageFormProps) => {
               <>
                 <button
                   data-tooltip-id="my-tooltip"
-                  data-tooltip-content="Add an image"
+                  data-tooltip-content="Edit image"
                   data-tooltip-place="top"
                 >
                   <Pencil className="h-4 w-4 mr-2" />
