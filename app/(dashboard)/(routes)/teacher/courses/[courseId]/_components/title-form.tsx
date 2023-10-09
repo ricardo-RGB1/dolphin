@@ -58,7 +58,7 @@ const TitleForm = ({ initialData, courseId }: TitleFormProps) => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       await axios.patch(`/api/courses/${courseId}`, values); // send a PATCH request to the /api/courses/:courseId endpoint with the form values
-      toast.success("Course title updated");
+      toast.success("Course title updated!");
       toggleEditing(); // toggle the editing state
       router.refresh();
     } catch (error) {

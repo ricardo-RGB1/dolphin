@@ -39,7 +39,7 @@ const ImageForm = ({ initialData, courseId }: ImageFormProps) => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       await axios.patch(`/api/courses/${courseId}`, values); // send a PATCH request to the /api/courses/:courseId endpoint with the form values
-      toast.success("Course image updated");
+      toast.success("Course image updated!");
       toggleEditing(); // toggle the editing state
       router.refresh();
     } catch (error) {
@@ -107,11 +107,11 @@ const ImageForm = ({ initialData, courseId }: ImageFormProps) => {
             endpoint="courseImage" // pass in the endpoint prop from the FileUpload component
             onChange={(url) => { // when the upload is complete, call the onChange function with the url
               if (url) {
-                onSubmit({ imageUrl: url }); // call the onSubmit function with the url
+                onSubmit({ imageUrl: url }); // call the onSubmit function with the url 
               }
             }}
           />
-          <div className="text-sm text-muted-foreground mt-4">
+          <div className="text-sm text-muted-foreground mt-4"> 
             16:9 aspect ratio recommended.
           </div>
         </div>
