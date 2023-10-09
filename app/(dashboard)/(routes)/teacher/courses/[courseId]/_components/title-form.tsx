@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Tooltip } from "react-tooltip";
 
 import {
   Form,
@@ -74,14 +75,21 @@ const TitleForm = ({ initialData, courseId }: TitleFormProps) => {
             <>Cancel</>
           ) : (
             <>
-              <Pencil className="h-4 w-4 mr-2" />
+               <button
+                data-tooltip-id="my-tooltip"
+                data-tooltip-content="Edit title"
+                data-tooltip-place="top"
+              >
+                <Pencil className="h-4 w-4 mr-2" />
+              </button><Tooltip id="my-tooltip" />
             </>
           )}
         </Button>
       </div>
 
       {/* if not editing, show the title */}
-      {!isEditing && <p className="text-sm mt-2">{initialData.title}</p>}
+      {!isEditing && 
+        <p className="text-sm mt-2">{initialData.title}</p>}
 
       {isEditing && (
         <Form {...form}>

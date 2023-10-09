@@ -7,8 +7,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { cn } from "@/lib/utils";
 import { Tooltip } from "react-tooltip";
+import { cn } from "@/lib/utils";
 import {
   Form,
   FormControl,
@@ -18,23 +18,24 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Pencil } from "lucide-react";
+import { ImageIcon, Pencil, PlusCircle } from "lucide-react";
 import { Course } from "@prisma/client";
+import Image from "next/image";
 
 // create the form schema
 const formSchema = z.object({
-  description: z.string().min(1, {
-    message: "Description is required",
+  imageUrl: z.string().min(1, {
+    message: "Image is required",
   }),
 });
 
 // create the form types
-interface DescriptionFormProps {
+interface ImageFormProps {
   initialData: Course;
   courseId: string;
 }
 
-const DescriptionForm = ({ initialData, courseId }: DescriptionFormProps) => {
+const ImageForm = ({ initialData, courseId }: ImageFormProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const router = useRouter();
 
@@ -47,9 +48,9 @@ const DescriptionForm = ({ initialData, courseId }: DescriptionFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema), // use zod to validate the form
     defaultValues: {
-      description: initialData?.description || ""
+      imageUrl: initialData?.imageUrl || "", // set the default values of the form to the initialData
     },
-});
+  });
 
   // extract the isSumitting and isValid properties from the form
   const { isSubmitting, isValid } = form.formState;
@@ -69,66 +70,62 @@ const DescriptionForm = ({ initialData, courseId }: DescriptionFormProps) => {
   return (
     <div className="mt-6 border bg-slate-100 rounded-md p-4">
       <div className="font-medium flex items-center justify-between">
-        Description
+        Image
         <Button variant="ghost" onClick={toggleEditing}>
-          {isEditing ? (
-            <>Cancel</>
-          ) : (
+          {isEditing && <>Cancel</>}
+
+          {!isEditing && !initialData.imageUrl && (
             <>
-                <button
+              <button
                 data-tooltip-id="my-tooltip"
-                data-tooltip-content="Edit description"
+                data-tooltip-content="Add an image"
+                data-tooltip-place="top"
+              >
+                <PlusCircle className="h-4 w-4 mr-2" />
+              </button>
+              <Tooltip id="my-tooltip" />
+            </>
+          )}
+
+          {!isEditing && initialData.imageUrl && (
+            <>
+              <button
+                data-tooltip-id="my-tooltip"
+                data-tooltip-content="Add an image"
                 data-tooltip-place="top"
               >
                 <Pencil className="h-4 w-4 mr-2" />
-              </button><Tooltip id="my-tooltip" />
+              </button>
+              <Tooltip id="my-tooltip" />
             </>
           )}
         </Button>
       </div>
 
-      {/* if not editing, show the title */}
-      {!isEditing && (
-        <p className={cn("text-sm mt-2",
-         !initialData.description && "text-slate-500 italic")}>
-          {initialData.description || "No description"}
-        </p>
-      )}
+      {/* When not editing, render an icon or image depending if there is an imageUrl */}
+      {!isEditing &&
+        (!initialData.imageUrl ? (
+          <div className="flex items-center justify-center h-60 bg-slate-200 rounded-md">
+            <ImageIcon className="h-10 w-10 text-slate-500" />
+          </div>
+        ) : (
+          <div>
+            <Image
+              alt="uploaded image"
+              fill
+              className="object-cover rounded-md"
+              src={initialData.imageUrl}
+            />
+          </div>
+        ))}
 
       {isEditing && (
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-4 mt-4"
-          >
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Textarea
-                      disabled={isSubmitting}
-                      placeholder="e.g. This course is about..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <div className="flex items-center gap-x-2">
-              <Button disabled={!isValid || isSubmitting} type="submit">
-                Save
-              </Button>
-            </div>
-          </form>
-        </Form>
+        <div>
+          {/* This is where I left off 10/5/23 */}
+        </div>
       )}
     </div>
   );
 };
 
-export default DescriptionForm;
-
-
+export default ImageForm;
