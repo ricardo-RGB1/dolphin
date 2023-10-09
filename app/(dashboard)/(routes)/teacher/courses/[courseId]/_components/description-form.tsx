@@ -58,7 +58,7 @@ const DescriptionForm = ({ initialData, courseId }: DescriptionFormProps) => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       await axios.patch(`/api/courses/${courseId}`, values); // send a PATCH request to the /api/courses/:courseId endpoint with the form values
-      toast.success("Course title updated");
+      toast.success("Course description updated");
       toggleEditing(); // toggle the editing state
       router.refresh();
     } catch (error) {
@@ -72,7 +72,7 @@ const DescriptionForm = ({ initialData, courseId }: DescriptionFormProps) => {
         Description
         <Button variant="ghost" onClick={toggleEditing}>
           {isEditing ? (
-            <>Cancel</>
+            <>Cancel</>  // if editing, show the cancel button
           ) : (
             <>
                 <button
@@ -86,12 +86,12 @@ const DescriptionForm = ({ initialData, courseId }: DescriptionFormProps) => {
           )}
         </Button>
       </div>
-
+                                                                             
       {/* if not editing, show the title */}
-      {!isEditing && (
+      {!isEditing && ( // if not editing
         <p className={cn("text-sm mt-2",
          !initialData.description && "text-slate-500 italic")}>
-          {initialData.description || "No description"}
+          {initialData.description || "No description"} 
         </p>
       )}
 
@@ -130,5 +130,7 @@ const DescriptionForm = ({ initialData, courseId }: DescriptionFormProps) => {
 };
 
 export default DescriptionForm;
+
+
 
 

@@ -3,24 +3,15 @@
 import * as z from "zod";
 import toast from "react-hot-toast";
 import axios from "axios";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Tooltip } from "react-tooltip";
-import { cn } from "@/lib/utils";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { ImageIcon, Pencil, PlusCircle } from "lucide-react";
 import { Course } from "@prisma/client";
 import Image from "next/image";
+import { FileUpload } from "@/components/file-upload";
 
 // create the form schema
 const formSchema = z.object({
@@ -44,22 +35,11 @@ const ImageForm = ({ initialData, courseId }: ImageFormProps) => {
     setIsEditing((current) => !current);
   };
 
-  // useForm hook
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema), // use zod to validate the form
-    defaultValues: {
-      imageUrl: initialData?.imageUrl || "", // set the default values of the form to the initialData
-    },
-  });
-
-  // extract the isSumitting and isValid properties from the form
-  const { isSubmitting, isValid } = form.formState;
-
   // create an onSubmit handler function
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       await axios.patch(`/api/courses/${courseId}`, values); // send a PATCH request to the /api/courses/:courseId endpoint with the form values
-      toast.success("Course title updated");
+      toast.success("Course image updated");
       toggleEditing(); // toggle the editing state
       router.refresh();
     } catch (error) {
@@ -74,31 +54,33 @@ const ImageForm = ({ initialData, courseId }: ImageFormProps) => {
         <Button variant="ghost" onClick={toggleEditing}>
           {isEditing && <>Cancel</>}
 
-          {!isEditing && !initialData.imageUrl && (
-            <>
-              <button
-                data-tooltip-id="my-tooltip"
-                data-tooltip-content="Add an image"
-                data-tooltip-place="top"
-              >
-                <PlusCircle className="h-4 w-4 mr-2" />
-              </button>
-              <Tooltip id="my-tooltip" />
-            </>
-          )}
+          {!isEditing &&
+            !initialData.imageUrl && ( // if not editing and there is no imageUrl
+              <>
+                <button
+                  data-tooltip-id="my-tooltip"
+                  data-tooltip-content="Add an image"
+                  data-tooltip-place="top"
+                >
+                  <PlusCircle className="h-4 w-4 mr-2" />
+                </button>
+                <Tooltip id="my-tooltip" />
+              </>
+            )}
 
-          {!isEditing && initialData.imageUrl && (
-            <>
-              <button
-                data-tooltip-id="my-tooltip"
-                data-tooltip-content="Add an image"
-                data-tooltip-place="top"
-              >
-                <Pencil className="h-4 w-4 mr-2" />
-              </button>
-              <Tooltip id="my-tooltip" />
-            </>
-          )}
+          {!isEditing &&
+            initialData.imageUrl && ( // if not editing but there is an imageUrl
+              <>
+                <button
+                  data-tooltip-id="my-tooltip"
+                  data-tooltip-content="Add an image"
+                  data-tooltip-place="top"
+                >
+                  <Pencil className="h-4 w-4 mr-2" />
+                </button>
+                <Tooltip id="my-tooltip" />
+              </>
+            )}
         </Button>
       </div>
 
@@ -109,9 +91,9 @@ const ImageForm = ({ initialData, courseId }: ImageFormProps) => {
             <ImageIcon className="h-10 w-10 text-slate-500" />
           </div>
         ) : (
-          <div>
+          <div className="relative aspect-video mt-2">
             <Image
-              alt="uploaded image"
+              alt="Upload"
               fill
               className="object-cover rounded-md"
               src={initialData.imageUrl}
@@ -121,7 +103,17 @@ const ImageForm = ({ initialData, courseId }: ImageFormProps) => {
 
       {isEditing && (
         <div>
-          {/* This is where I left off 10/5/23 */}
+          <FileUpload
+            endpoint="courseImage" // pass in the endpoint prop from the FileUpload component
+            onChange={(url) => { // when the upload is complete, call the onChange function with the url
+              if (url) {
+                onSubmit({ imageUrl: url }); // call the onSubmit function with the url
+              }
+            }}
+          />
+          <div className="text-sm text-muted-foreground mt-4">
+            16:9 aspect ratio recommended.
+          </div>
         </div>
       )}
     </div>

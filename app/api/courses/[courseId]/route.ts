@@ -9,7 +9,7 @@ export async function PATCH(
     try {
         const { userId } = auth();
         const { courseId } = params; // destructuring the courseId from the params object
-        const { values } = await req.json(); // receives the title from the request body
+        const  values  = await req.json();
 
         // check if the user is authenticated
         if (!userId) {

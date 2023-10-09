@@ -14,11 +14,11 @@ export async function POST(req: Request) {
             return new NextResponse("Unauthorized", { status: 401 });
         }
 
-        // create a new course in the database
+        // create a new course in the database 
         const course = await db.course.create({
             data: {
-                userId,
-                title,
+                userId, // userId is the ID of the user who created the course
+                title, // title is the title of the course
             }
         });
 

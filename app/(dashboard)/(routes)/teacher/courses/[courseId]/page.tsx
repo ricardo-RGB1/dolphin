@@ -63,11 +63,11 @@ const CourseIdPage = async ({params}:{params: {courseId: string}}) => {
                         courseId={course.id} 
                     />
                     <DescriptionForm
-                        initialData={course} // pass in the initialData prop to the TitleForm component
+                        initialData={course}
                         courseId={course.id} 
                     />
                      <ImageForm
-                        initialData={course} // pass in the initialData prop to the TitleForm component
+                        initialData={course} 
                         courseId={course.id} 
                     />
                 </div>
