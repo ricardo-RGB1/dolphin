@@ -81,5 +81,5 @@ body,
   }
 }
 
-
-@import "~@uploadthing/react/styles.css"
+/* for the image upload */
+@import "~@uploadthing/react/styles.css" 
