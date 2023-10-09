@@ -39,7 +39,7 @@ const ImageForm = ({ initialData, courseId }: ImageFormProps) => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       await axios.patch(`/api/courses/${courseId}`, values); // send a PATCH request to the /api/courses/:courseId endpoint with the form values
-      toast.success("Course image updated!");
+      toast.success("Image updated!");
       toggleEditing(); // toggle the editing state
       router.refresh();
     } catch (error) {
