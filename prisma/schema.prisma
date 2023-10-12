@@ -19,7 +19,7 @@ model Course {
   isPublished Boolean      @default(false)
 
   categoryId  String?
-  category    Category?    @relation(fields: [categoryId], references: [id])
+  category    Category?    @relation(fields: [categoryId], references: [id]) // this is the foreign key
   // categoryId references the id field in the Category model below 
 
   createdAt   DateTime     @default(now())
@@ -30,7 +30,7 @@ model Course {
 }
 
 model Category {
-  id        String   @id @default(uuid())
+  id        String   @id @default(uuid()) // this is the primary key
   name      String @unique
   courses   Course[]
 }
@@ -41,8 +41,7 @@ model Attachment {
   url  String @db.Text
 
   courseId String // this is the foreign key
-  
-  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade) //
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade) 
   // courseId references the id field in the Course model
 
   createdAt DateTime @default(now())

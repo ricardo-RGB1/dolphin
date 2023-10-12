@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import TitleForm from "./_components/title-form";
 import DescriptionForm from "./_components/description-form";
 import ImageForm from "./_components/image-form";
+import CategoryForm from "./_components/category-form";
 
 
 // the courseId is passed in as a parameter to the page
@@ -24,6 +25,16 @@ const CourseIdPage = async ({params}:{params: {courseId: string}}) => {
             id: params.courseId // find the course with the given id
         }
     })
+
+    // Query the database for the categories
+        // -- this is used to populate the select input for the category field
+        // -- create a scripts folder at the root of the project and add a seed.ts file to populate the database with categories
+    const categories = await db.category.findMany({
+        orderBy: {
+            name: 'asc' // order the categories by name in ascending order
+        }
+    });
+
 
     if(!course) {
         return redirect('/'); // if there is no course with that id, redirect to courses page
@@ -69,6 +80,14 @@ const CourseIdPage = async ({params}:{params: {courseId: string}}) => {
                      <ImageForm
                         initialData={course} 
                         courseId={course.id} 
+                    />
+                     <CategoryForm
+                        initialData={course}
+                        courseId={course.id} 
+                        options={categories.map((category) => ({ // map over the categories and return an object with the label and value
+                            label: category.name,
+                            value: category.id
+                        }))}
                     />
                 </div>
             </div>
