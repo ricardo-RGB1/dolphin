@@ -8,7 +8,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Tooltip } from "react-tooltip";
 import { Button } from "@/components/ui/button";
-import { File, ImageIcon, PlusCircle } from "lucide-react";
+import { File, Loader2, PlusCircle, X } from "lucide-react";
 import { Attachment, Course } from "@prisma/client";
 import { FileUpload } from "@/components/file-upload";
 
@@ -19,12 +19,14 @@ const formSchema = z.object({
 
 // create the form types
 interface AttachmentFormProps {
-  initialData: Course & { attachments: Attachment[] };
+  initialData: Course & { attachments: Attachment[] }; // the initial data is a course and an array of attachments
   courseId: string;
 }
 
 const AttachmentForm = ({ initialData, courseId }: AttachmentFormProps) => {
   const [isEditing, setIsEditing] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null); // set the deletingId to null by default
+
   const router = useRouter();
 
   // toggle function to switch between editing and not editing
@@ -43,6 +45,21 @@ const AttachmentForm = ({ initialData, courseId }: AttachmentFormProps) => {
       toast.error("Something went wrong");
     }
   };
+
+  // create a delete function
+  const onDelete = async (id: string) => {
+    try {
+      setDeletingId(id); // set the deletingId to the id of the attachment
+      await axios.delete(`/api/courses/${courseId}/attachments/${id}`); // delete the attachment from the api
+      toast.success("Attachment deleted"); 
+      router.refresh(); 
+    } catch (error) {
+      toast.error("Something went wrong");
+    } finally {
+      setDeletingId(null); // set the deletingId back to null
+    }
+  };
+
 
   return (
     <div className="mt-6 border bg-slate-100 rounded-md p-4">
@@ -82,7 +99,19 @@ const AttachmentForm = ({ initialData, courseId }: AttachmentFormProps) => {
                   className="flex items-center p-3 w-full bg-sky-100 border-sky-200 border text-sky-700 rounded-md"
                 >
                   <File className="h-4 w-4 mr-2 flex-shrink-0" />
-                  <p className="text-sm line-clamp-1">{attachment.name}</p>
+                  <p className="text-sm line-clamp-1">{attachment.name}</p> 
+                  {deletingId === attachment.id && (
+                    <div>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    </div>
+                  )}
+                  {deletingId !== attachment.id && (
+                    <button 
+                      onClick={() => onDelete(attachment.id)} // call the onDelete function with the attachment id as the argument
+                    className="ml-auto hover:opacity-75 transition">
+                      <X className="h-4 w-4" />
+                    </button>
+                  )}
                 </div>
               ))}
             </div>

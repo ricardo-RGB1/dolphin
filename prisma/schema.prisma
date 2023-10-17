@@ -24,7 +24,11 @@ model Course {
 
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
-  attachments Attachment[]
+
+  // create the back-relationships to the other models
+  chapters    Chapter[] 
+  attachments Attachment[] 
+  purchases   Purchase[] 
 
   @@index([categoryId])
 }
@@ -53,3 +57,77 @@ model Attachment {
 
 // what is a foreign key?
 // a foreign key is a column or group of columns in a relational database table that provides a link between data in two tables. It acts as a cross-reference between tables because it references the primary key of another table, thereby establishing a link between them.
+
+
+model Chapter {
+  id       String   @id @default(uuid()) // this is the primary key
+  title    String
+  description String? @db.Text
+  videoUrl String? @db.Text
+  position Int
+  isPublished Boolean @default(false)
+  isFree Boolean @default(false)
+
+  muxData MuxData?
+
+  courseId String // this is the foreign key
+  course  Course @relation(fields: [courseId], references: [id], onDelete: Cascade) // this is the foreign key
+ 
+  userProgress UserProgress[] // 
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([courseId])
+
+}
+
+model MuxData {
+  id String @id @default(uuid())
+  assetId String
+  playbackId String?
+
+  chapterId String @unique
+  chapter Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade) // establish a relationship between the MuxData and Chapter models 
+}
+
+model UserProgress {
+  id String @id @default(uuid())
+  userId String
+
+  chapterId String
+  chapter Chapter @relation(fields: [chapterId], references: [id])
+
+  completed Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([chapterId]) 
+  @@unique([userId, chapterId]) 
+}
+
+
+model Purchase {
+  id String @id @default(uuid())
+  userId String
+
+  courseId String
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([courseId])
+
+}
+
+
+model StripeCustomer {
+  id String @id @default(uuid())
+  userId String @unique
+  stripeCustomerId String @unique
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
