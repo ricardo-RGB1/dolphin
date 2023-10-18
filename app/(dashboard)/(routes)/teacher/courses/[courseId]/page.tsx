@@ -14,6 +14,7 @@ import CategoryForm from "./_components/category-form";
 import { IconBadge } from "@/components/icon-badge";
 import PriceForm from "./_components/price-form";
 import AttachmentForm from "./_components/attachment-form";
+import ChaptersForm from "./_components/chapters-form";
 
 // the courseId is passed in as a parameter to the page
 // the params is a type of {courseId: string} - an object with a courseId property of type string
@@ -28,9 +29,15 @@ const CourseIdPage = async ({ params }: { params: { courseId: string } }) => {
   const course = await db.course.findUnique({
     where: {
       id: params.courseId, // find the course with the given id
+      userId,
     },
-    include: { // include the attachments in the course
-      attachments: { 
+    include: {
+      chapters: {
+        orderBy: {
+          position: "asc", // order the chapters by position in ascending order
+        },
+      },
+      attachments: {
         orderBy: {
           createdAt: "desc",
         },
@@ -58,6 +65,7 @@ const CourseIdPage = async ({ params }: { params: { courseId: string } }) => {
     course.imageUrl,
     course.price,
     course.categoryId,
+    course.chapters.some((chapter) => chapter.isPublished), // check if any of the chapters are published, at least one chapter must be published
   ];
 
   const totalRequiredFields = requiredFields.length; // total number of required fields
@@ -102,7 +110,7 @@ const CourseIdPage = async ({ params }: { params: { courseId: string } }) => {
               <IconBadge icon={ListChecks} />
               <h2 className="text-xl">Course Chapters</h2>
             </div>
-            <div>TODO - add chapters</div>
+            <ChaptersForm initialData={course} courseId={course.id} />
           </div>
           <div>
             <div className="flex items-center gap-x-2">
