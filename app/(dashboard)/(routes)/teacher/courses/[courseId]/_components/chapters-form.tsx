@@ -9,6 +9,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Tooltip } from "react-tooltip";
+import  ChaptersList  from "./chapters-list";
 import {
   Form,
   FormControl,
@@ -126,7 +127,11 @@ const ChaptersForm = ({ initialData, courseId }: ChaptersFormProps) => {
           )}
         >
           {!initialData.chapters.length && "No chapters yet"}
-          {/* TODO: ADD A LIST OF CHAPTERS */}
+          <ChaptersList 
+            onEdit={() => {}}
+            onReorder={() => {}}
+            items={initialData.chapters || []}
+          />
         </div>
       )}
 
