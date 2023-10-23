@@ -4,7 +4,7 @@ import * as z from "zod";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -66,6 +66,21 @@ const ChaptersForm = ({ initialData, courseId }: ChaptersFormProps) => {
       toast.error("Something went wrong");
     }
   };
+
+  // create an onReorder handler function
+  // updateData is an array of objects with an id and position property
+  const onReorder = async (updateData: { id: string; position: number }[]) => {
+    try {
+      setIsUpdating(true);
+      await axios.put(`/api/courses/${courseId}/chapters/reorder`, {list: updateData}); // put the updateData to the api endpoint
+      router.refresh(); 
+    } catch {
+      toast.error("Something went wrong");
+    } finally {
+      setIsUpdating(false);
+    }
+  }
+
 
   return (
     <div className="mt-6 border bg-slate-100 rounded-md p-4">
@@ -129,7 +144,7 @@ const ChaptersForm = ({ initialData, courseId }: ChaptersFormProps) => {
           {!initialData.chapters.length && "No chapters yet"}
           <ChaptersList 
             onEdit={() => {}}
-            onReorder={() => {}}
+            onReorder={onReorder}
             items={initialData.chapters || []}
           />
         </div>
