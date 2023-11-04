@@ -7,34 +7,40 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
 import { Tooltip } from "react-tooltip";
-
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Pencil } from "lucide-react";
+import { Chapter } from "@prisma/client";
+import { Editor } from "@/components/editor";
+import { Preview } from "@/components/preview";
+import { Checkbox } from "@/components/ui/checkbox";
 
 // create the form schema
 const formSchema = z.object({
-  title: z.string().min(1),
+  isFree: z.boolean().default(false), // add the isFree field to the form schema
 });
 
 // create the form types
-interface ChapterTitleFormProps {
-  chapter: {
-    title: string;
-  };
+interface ChapterAccessFormProps {
+  chapter: Chapter;
   courseId: string;
   chapterId: string;
 }
 
-const ChapterTitleForm = ({ chapter, courseId, chapterId }: ChapterTitleFormProps) => {
+const ChapterAccessForm = ({
+  chapter,
+  courseId,
+  chapterId,
+}: ChapterAccessFormProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const router = useRouter();
 
@@ -46,19 +52,22 @@ const ChapterTitleForm = ({ chapter, courseId, chapterId }: ChapterTitleFormProp
   // useForm hook
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema), // use zod to validate the form
-    defaultValues: chapter, // set the default values of the form to the chapter
+    defaultValues: {
+      isFree: !!chapter.isFree, // set the default value of isFree to a boolean value
+    },
   });
 
   // extract the isSumitting and isValid properties from the form
   const { isSubmitting, isValid } = form.formState;
 
-
   // create an onSubmit handler function
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      // patch the chapter with the new title ********
-      await axios.patch(`/api/courses/${courseId}/chapters/${chapterId}`, values); 
-      toast.success("Chapter title updated!");
+      await axios.patch(
+        `/api/courses/${courseId}/chapters/${chapterId}`,
+        values
+      ); // send a PATCH request to the /api/courses/:courseId endpoint with the form values
+      toast.success("Access updated!");
       toggleEditing(); // toggle the editing state
       router.refresh();
     } catch (error) {
@@ -69,25 +78,41 @@ const ChapterTitleForm = ({ chapter, courseId, chapterId }: ChapterTitleFormProp
   return (
     <div className="mt-6 border bg-slate-100 rounded-md p-4">
       <div className="font-medium flex items-center justify-between">
-        Chapter Title
+        Chapter Access
         <Button variant="ghost" onClick={toggleEditing}>
-        {isEditing ? (
-            <>Cancel</>  // if editing, show the cancel button
+          {isEditing ? (
+            <>Cancel</> // if editing, show the cancel button
           ) : (
             <>
-                <button
+              <button
                 data-tooltip-id="my-tooltip"
-                data-tooltip-content="Edit title"
+                data-tooltip-content="Edit access"
                 data-tooltip-place="top"
               >
                 <Pencil className="h-4 w-4 mr-2" />
-              </button><Tooltip id="my-tooltip" />
+              </button>
+              <Tooltip id="my-tooltip" />
             </>
           )}
         </Button>
       </div>
+
       {/* if not editing, show the title */}
-      {!isEditing && <p className="text-sm mt-2">{chapter.title}</p>}
+      {!isEditing && ( // if not editing
+        <p
+          className={cn(
+            "text-sm mt-2",
+            !chapter.isFree && "text-slate-500 italic"
+          )}
+        >
+          {chapter.isFree ? ( // if isFree is true
+            <>This chapter is free for preview</>
+          ) : (
+            <>This chapter is not free.</>
+          )
+          }
+        </p>
+      )}
 
       {isEditing && (
         <Form {...form}>
@@ -97,17 +122,20 @@ const ChapterTitleForm = ({ chapter, courseId, chapterId }: ChapterTitleFormProp
           >
             <FormField
               control={form.control}
-              name="title"
+              name="isFree"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
                   <FormControl>
-                    <Input
-                      disabled={isSubmitting}
-                      placeholder="e.g. Introduction to the Course"
-                      {...field}
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
                     />
                   </FormControl>
-                  <FormMessage />
+                  <div className="space-y-1 leading-none">
+                    <FormDescription>
+                      Check this box if you want to make this chapter free for preview
+                    </FormDescription>
+                  </div>
                 </FormItem>
               )}
             />
@@ -123,17 +151,4 @@ const ChapterTitleForm = ({ chapter, courseId, chapterId }: ChapterTitleFormProp
   );
 };
 
-export default ChapterTitleForm;
-
-
-
-// onSubmit ********
-// This code is using the Axios library to send a PATCH request to the server to update a specific chapter title in a course.
-
-// The axios.patch method is called with a URL string as its first argument, which is constructed using template literals to include the courseId and chapterId variables. This URL string specifies the endpoint on the server that should handle the PATCH request.
-
-// The values object is passed as the second argument to the axios.patch method. This object contains the new values to be set for the chapter title. The axios.patch method will serialize this object as JSON and include it in the request body.
-
-// The await keyword is used to wait for the response from the server before continuing execution of the code. The response from the server is not used in this code, but it could be used to handle errors or update the UI with the new chapter title.
-
-// Overall, this code is used to update the title of a specific chapter in a course by sending a PATCH request to the server with the new title data.
+export default ChapterAccessForm;

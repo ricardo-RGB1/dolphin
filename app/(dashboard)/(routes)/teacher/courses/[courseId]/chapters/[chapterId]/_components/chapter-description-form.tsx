@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Pencil } from "lucide-react";
 import { Chapter } from "@prisma/client";
 import { Editor } from "@/components/editor";
+import { Preview } from "@/components/preview";
 
 // create the form schema
 const formSchema = z.object({
@@ -27,13 +28,17 @@ const formSchema = z.object({
 });
 
 // create the form types
-interface  ChapterDescriptionFormProps {
-  initialData: Chapter;
+interface ChapterDescriptionFormProps {
+  chapter: Chapter;
   courseId: string;
-  chapterId: string; 
+  chapterId: string;
 }
 
-const ChapterDescriptionForm  = ({ initialData, courseId, chapterId }: ChapterDescriptionFormProps) => {
+const ChapterDescriptionForm = ({
+  chapter,
+  courseId,
+  chapterId,
+}: ChapterDescriptionFormProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const router = useRouter();
 
@@ -46,9 +51,9 @@ const ChapterDescriptionForm  = ({ initialData, courseId, chapterId }: ChapterDe
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema), // use zod to validate the form
     defaultValues: {
-      description: initialData?.description || ""
+      description: chapter?.description || "",
     },
-});
+  });
 
   // extract the isSumitting and isValid properties from the form
   const { isSubmitting, isValid } = form.formState;
@@ -56,7 +61,10 @@ const ChapterDescriptionForm  = ({ initialData, courseId, chapterId }: ChapterDe
   // create an onSubmit handler function
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      await axios.patch(`/api/courses/${courseId}/chapters/${chapterId}`, values); // send a PATCH request to the /api/courses/:courseId endpoint with the form values
+      await axios.patch(
+        `/api/courses/${courseId}/chapters/${chapterId}`,
+        values
+      ); // send a PATCH request to the /api/courses/:courseId endpoint with the form values
       toast.success("Chapter updated!");
       toggleEditing(); // toggle the editing state
       router.refresh();
@@ -71,30 +79,39 @@ const ChapterDescriptionForm  = ({ initialData, courseId, chapterId }: ChapterDe
         Chapter Description
         <Button variant="ghost" onClick={toggleEditing}>
           {isEditing ? (
-            <>Cancel</>  // if editing, show the cancel button
+            <>Cancel</> // if editing, show the cancel button
           ) : (
             <>
-                <button
+              <button
                 data-tooltip-id="my-tooltip"
                 data-tooltip-content="Edit description"
                 data-tooltip-place="top"
               >
                 <Pencil className="h-4 w-4 mr-2" />
-              </button><Tooltip id="my-tooltip" />
+              </button>
+              <Tooltip id="my-tooltip" />
             </>
           )}
         </Button>
       </div>
-                                                                             
+
       {/* if not editing, show the title */}
       {!isEditing && ( // if not editing
-        <p className={cn("text-sm mt-2",
-         !initialData.description && "text-slate-500 italic")}>
-          {initialData.description || "No description"} 
-        </p>
+        <div
+          className={cn(
+            "text-sm mt-2",
+            !chapter.description && "text-slate-500 italic"
+          )}
+        >
+          {!chapter.description || "No description"}
+          {/* // if there is a description show the preview */}
+          {chapter.description && (
+            <Preview value={chapter.description} />
+          )}
+        </div>
       )}
 
-      {isEditing && (
+      {isEditing && (                                 
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -106,9 +123,7 @@ const ChapterDescriptionForm  = ({ initialData, courseId, chapterId }: ChapterDe
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Editor
-                      {...field}
-                    />
+                    <Editor {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -127,7 +142,3 @@ const ChapterDescriptionForm  = ({ initialData, courseId, chapterId }: ChapterDe
 };
 
 export default ChapterDescriptionForm;
-
-
-
-
