@@ -92,11 +92,11 @@ const ChaptersForm = ({ initialData, courseId }: ChaptersFormProps) => {
   return (
     <div className="relative mt-6 border bg-slate-100 rounded-md p-4">
       {/* if isUpdating is true, show the loader */}
-      {isUpdating && ( 
+      {isUpdating && (
         <div className="absolute h-full w-full bg-slate-500/20 top-0 right-0 rounded-md flex items-center justify-center">
           <Loader2 className="animate-spin h-6 w-6 text-sky-700" />
         </div>
-      )} 
+      )}
       <div className="font-medium flex items-center justify-between">
         Chapters
         <Button variant="ghost" onClick={toggleCreating}>
@@ -156,7 +156,7 @@ const ChaptersForm = ({ initialData, courseId }: ChaptersFormProps) => {
           )}
         >
           {!initialData.chapters.length && "No chapters yet"}
-          <ChaptersList 
+          <ChaptersList
             onEdit={onEdit}
             onReorder={onReorder}
             items={initialData.chapters || []}
@@ -164,11 +164,15 @@ const ChaptersForm = ({ initialData, courseId }: ChaptersFormProps) => {
         </div>
       )}
 
-  
-      {!isCreating && ( // if not creating
-        <p className="text-sm text-muted-foreground mt-4">
-          Drag and drop to reorder the chapters.
-        </p>
+      {!isCreating && (
+        <>
+          <p className="text-sm text-muted-foreground mt-4">
+            Drag and drop to reorder the chapters.
+          </p>
+          <span className="text-sm italic text-muted-foreground">
+            Important: Must edit chapters before publishing course.
+          </span>
+        </>
       )}
     </div>
   );

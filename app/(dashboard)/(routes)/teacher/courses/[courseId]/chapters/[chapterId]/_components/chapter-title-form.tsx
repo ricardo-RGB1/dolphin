@@ -69,7 +69,7 @@ const ChapterTitleForm = ({ chapter, courseId, chapterId }: ChapterTitleFormProp
   return (
     <div className="mt-6 border bg-slate-100 rounded-md p-4">
       <div className="font-medium flex items-center justify-between">
-        Chapter Title
+         Chapter Title
         <Button variant="ghost" onClick={toggleEditing}>
         {isEditing ? (
             <>Cancel</>  // if editing, show the cancel button

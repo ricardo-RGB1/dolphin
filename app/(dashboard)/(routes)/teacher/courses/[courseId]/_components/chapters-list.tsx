@@ -105,7 +105,11 @@ const ChaptersList = ({ items, onReorder, onEdit }: ChaptersListProps) => {
                     </div>
                     {chapter.title}
                     <div className="ml-auto pr-2 flex items-center gap-x-2">
-                      {chapter.isFree && <Badge className="bg-amber-600 hover:bg-amber-600">Free</Badge>}
+                      {chapter.isFree && (
+                        <Badge className="bg-amber-600 hover:bg-amber-600">
+                          Free
+                        </Badge>
+                      )}
                       <Badge
                         className={cn(
                           "bg-slate-500",
@@ -116,7 +120,7 @@ const ChaptersList = ({ items, onReorder, onEdit }: ChaptersListProps) => {
                       </Badge>
                       <button
                         data-tooltip-id="my-tooltip"
-                        data-tooltip-content="Edit chapter title"
+                        data-tooltip-content="Edit chapter"
                         data-tooltip-place="top"
                       >
                         <Pencil
