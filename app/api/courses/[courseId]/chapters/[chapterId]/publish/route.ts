@@ -45,8 +45,8 @@ export async function PATCH(
       return new NextResponse("Missing required fields", { status: 400 });
     }
 
-    // update the chapter
-    const publishedChapter = await db.chapter.update({
+    // update the chapter in the database
+    const publishedChapter = await db.chapter.update({ 
       where: {
         id: params.chapterId,
         courseId: params.courseId,

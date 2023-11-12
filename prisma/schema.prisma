@@ -6,6 +6,7 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"] // enable full-text search
 }
 
 // create the Course schema here
@@ -18,9 +19,9 @@ model Course {
   price       Float?
   isPublished Boolean @default(false)
 
-  categoryId String?
+  categoryId String?   // categoryId references the id field in the Category model below 
   category   Category? @relation(fields: [categoryId], references: [id]) // this is the foreign key
-  // categoryId references the id field in the Category model below 
+
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -30,7 +31,8 @@ model Course {
   attachments Attachment[]
   purchases   Purchase[]
 
-  @@index([categoryId])
+  @@index([categoryId]) // create an index on the categoryId field
+  @@fulltext([title])  // enable full-text search on the title field
 }
 
 model Category {
@@ -71,7 +73,7 @@ model Chapter {
   courseId String // this is the foreign key
   course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade) // this is the foreign key
 
-  userProgress UserProgress[] // 
+  userProgress UserProgress[] 
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -100,7 +102,7 @@ model UserProgress {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([userId, chapterId])
+  @@unique([userId, chapterId]) // create a unique index on the userId and chapterId fields
   @@index([chapterId])
 }
 
@@ -114,6 +116,7 @@ model Purchase {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@unique([userId, courseId]) // create a unique index on the userId and courseId fields
   @@index([courseId])
 }
 

@@ -12,9 +12,9 @@ const NavbarRoutes = () => {
     const pathName = usePathname();
 
 
-    const isTeacherPage = pathName?.startsWith('/teacher');
-    const isPlayerPage = pathName?.includes('/chapter');
-    const isSearchPage = pathName?.startsWith('/search');
+    const isTeacherPage = pathName?.startsWith('/teacher'); 
+    const isCoursePage = pathName?.includes('/courses');
+    const isSearchPage = pathName?.startsWith('/search'); // 
 
     return (
       <>
@@ -24,7 +24,7 @@ const NavbarRoutes = () => {
         </div>
       )}
         <div className="flex gap-x-2 ml-auto">
-          {isTeacherPage || isPlayerPage ? ( // If the current page is a teacher or player page, render a Link component that points to the root URL ("/") and contains a Button component with a LogOut icon and the text "Exit"
+          {isTeacherPage || isCoursePage ? ( // If the current page is a teacher or course page, render a Link component that points to the root URL ("/") and contains a Button component with a LogOut icon and the text "Exit"
             <Link href="/">
               <Button size="sm" variant="ghost">
                 <LogOut className="h-4 w-4 mr-2" />
@@ -32,7 +32,7 @@ const NavbarRoutes = () => {
               </Button>
             </Link>
           ) : (
-            // If the current page is not a teacher or player page, render a Link component that points to the teacher courses page
+            // If the current page is not a teacher or course page, render a Link component that points to the teacher courses page
             <Link href="/teacher/courses">
               <Button size="sm" variant="outline">
                 Teacher Mode

@@ -73,9 +73,11 @@ const ChaptersForm = ({ initialData, courseId }: ChaptersFormProps) => {
   const onReorder = async (updateData: { id: string; position: number }[]) => {
     try {
       setIsUpdating(true);
-      await axios.put(`/api/courses/${courseId}/chapters/reorder`, {list: updateData}); // put the updateData to the api endpoint
+      await axios.put(`/api/courses/${courseId}/chapters/reorder`, {
+        list: updateData,
+      }); // put the updateData to the api endpoint
       toast.success("Chapters reordered!");
-      router.refresh(); 
+      router.refresh();
     } catch {
       toast.error("Something went wrong");
     } finally {

@@ -15,11 +15,5 @@ export const Preview = ({ value }: PreviewProps) => {
     []
   ); // for hydration purposes
 
-  return (
-    <ReactQuill 
-      theme="snow" 
-      value={value}
-      readOnly
-    />
-  );
+  return <ReactQuill theme="bubble" value={value} readOnly />;
 };

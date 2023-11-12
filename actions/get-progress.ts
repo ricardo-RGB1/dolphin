@@ -1,7 +1,10 @@
 import { db } from "@/lib/db";
 
 // This function retrieves the progress of a user in a course
-async function getProgress(userId: string, courseId: string): Promise<number> {
+export const getProgress = async (
+  userId: string,
+  courseId: string
+): Promise<number> => {
   try {
     // Retrieve the published chapters of the course from the database
     const publishedChapters = await db.chapter.findMany({
@@ -33,10 +36,9 @@ async function getProgress(userId: string, courseId: string): Promise<number> {
       (validCompletedChapters / publishedChapters.length) * 100;
 
     return progressPercentage;
-
   } catch (error) {
     // If an error occurs during the process, log the error and return 0
     console.error(error);
     return 0;
   }
-}
+};
