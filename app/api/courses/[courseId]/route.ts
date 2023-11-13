@@ -2,6 +2,7 @@ import Mux from "@mux/mux-node";
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { isTeacher } from "@/lib/teacher";
 
 // For also deleting the Mux data when a course is deleted
 // You don't want to leave orphaned Mux data in your account
@@ -16,7 +17,8 @@ export async function DELETE(
 ) {
     try {
         const { userId } = auth();
-        if(!userId) {
+
+        if(!userId || !isTeacher(userId)) { // if the userId is not present or the user is not a teacher
             return new NextResponse("Unauthorized", { status: 401 });
         }
 
@@ -76,7 +78,7 @@ export async function PATCH(
         const  values  = await req.json();
 
         // check if the user is authenticated
-        if (!userId) {
+        if (!userId || !isTeacher(userId)) { // if the userId is not present or the user is not a teacher
             return new NextResponse("Unauthorized", { status: 401 });
         }
 

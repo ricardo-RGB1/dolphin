@@ -1,30 +1,29 @@
 import { db } from "@/lib/db";
+import { isTeacher } from "@/lib/teacher";
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 
 
 // API route for creating a new course in the database ********
-
 export async function POST(req: Request) {
     try {
-        const { userId } = auth(); // gets the userId from the auth() function
-        const { title } = await req.json(); // receives the title from the request body
+      const { userId } = auth(); // gets the userId from the auth() function
+      const { title } = await req.json(); // receives the title from the request body
 
-        if (!userId) {
-            return new NextResponse("Unauthorized", { status: 401 });
-        }
+      // checks if the userId is present and if the user is a teacher
+      if (!userId || !isTeacher(userId)) {
+        return new NextResponse("Unauthorized", { status: 401 });
+      }
 
-        // create a new course in the database 
-        const course = await db.course.create({
-            data: {
-                userId, // userId is the ID of the user who created the course
-                title, // title is the title of the course
-            }
-        });
+      // create a new course in the database
+      const course = await db.course.create({
+        data: {
+          userId, // userId is the ID of the user who created the course
+          title, // title is the title of the course
+        },
+      });
 
-
-        return NextResponse.json(course);
-
+      return NextResponse.json(course);
     } catch (error) {
         console.log("[COURSES]", error);
         return new NextResponse("Internal Server Error", { status: 500 })
