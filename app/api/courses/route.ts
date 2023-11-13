@@ -10,7 +10,7 @@ export async function POST(req: Request) {
       const { userId } = auth(); // gets the userId from the auth() function
       const { title } = await req.json(); // receives the title from the request body
 
-      // checks if the userId is present and if the user is a teacher
+      // checks if the userId is present 
       if (!userId) {
         return new NextResponse("Unauthorized", { status: 401 });
       }
